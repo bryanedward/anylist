@@ -1,15 +1,41 @@
-version: '3.1'
+version: '3.8'
 
 services:
-  mongo-api:
-    container_name: mongoapi
-    image: mongo
-    restart: always
+  dev:
+    image: nest_docker:local
+    container_name: nestjs_api_dev
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - 27017:27017
+      - 8080:3000
+    networks:
+      - networknest
+    depends_on:
+      - mongonest
+    volumes:
+      - .:/usr/src/app
+    command: npm run start:dev
+
+  mongonest:
+    image: mongo:latest
+    container_name: mongonest
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${ADMINUSERNAME}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${ADMINPASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${ADMINUSERNAME}:${ADMINPASSWORD}@mongo:27017/
-    # volumes:
-      # - ./severapi:/data/db
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - 27018:27017
+    networks:
+      - networknest
+    restart: always
+
+volumes:
+  mongodata:
+networks:
+  networknest:
+    name: networknest
+    driver: bridge
+    ipam:
+      driver: default

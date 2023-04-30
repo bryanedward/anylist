@@ -1,16 +1,41 @@
-import { ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
+import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  ObjectIdColumn,
+  ObjectID,
+  CreateDateColumn,
+  BaseEntity,
+} from 'typeorm';
 
-@Entity({ name: 'items' })
+@Entity('Item')
 @ObjectType()
-export class Item {
+export class Item extends BaseEntity {
   @ObjectIdColumn()
-  id: ObjectID;
+  @Field(() => ID)
+  _id: ObjectID;
+
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  name?: string;
 
   @Column()
-  name: string;
-  @Column()
+  @Field(() => Float)
   quantity: number;
+
   @Column()
+  @Field(() => String)
   quantityUnits: string;
+
+  @Field()
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 }
+
+// @AfterInsert()
+// updateData() {
+//   console.log(
+//     '🚀 ~ file: item.entity.ts:34 ~ Item ~ validateInsert ~ data:',
+//     this,
+//   );
+// }

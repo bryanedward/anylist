@@ -1,7 +1,18 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field, ObjectType, Float } from '@nestjs/graphql';
+import { Column } from 'typeorm';
 
-@InputType()
+@ObjectType({ isAbstract: true })
+@InputType({ isAbstract: true })
 export class CreateItemInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Column()
+  @Field(() => String)
+  name: string;
+
+  @Column()
+  @Field(() => Float, { description: 'quantity product' })
+  quantity: number;
+
+  @Column()
+  @Field(() => String)
+  quantityUnits: string;
 }

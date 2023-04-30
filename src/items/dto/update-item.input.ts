@@ -1,8 +1,9 @@
+import { Type } from 'class-transformer';
 import { CreateItemInput } from './create-item.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-
+import { InputType, Field } from '@nestjs/graphql';
 @InputType()
-export class UpdateItemInput extends PartialType(CreateItemInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateItemInput {
+  @Field()
+  @Type(() => CreateItemInput)
+  item: CreateItemInput;
 }

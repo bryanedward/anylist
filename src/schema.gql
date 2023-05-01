@@ -15,15 +15,27 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type User {
+  _id: ID!
+  email: String!
+  fullName: String!
+  password: String!
+  roles: [String!]!
+  isActive: Boolean!
+}
+
 type Query {
   findAll: [Item!]!
   findItem(id: ID!): Item!
+  users: [User!]!
 }
 
 type Mutation {
   createItem(createItemInput: CreateItemInput!): Item!
   updateItem(_id: String!, updateItemInput: UpdateItemInput!): Item!
   removeItem(id: ID!): Item!
+  blockUser(id: Int!): User!
+  signup(signUpInput: SignUpInput!): AuthResponse!
 }
 
 input CreateItemInput {
@@ -36,4 +48,15 @@ input CreateItemInput {
 
 input UpdateItemInput {
   item: CreateItemInput!
+}
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
+
+input SignUpInput {
+  email: String!
+  fullName: String!
+  password: String!
 }

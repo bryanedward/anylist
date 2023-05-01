@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { CreateItemInput } from './dto/create-item.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from './entities/item.entity';
 import { MongoRepository } from 'typeorm';
 import { ObjectId } from 'bson';
 import { UpdateItemInput } from './dto/update-item.input';
+import { isNil } from 'lodash';
 
 @Injectable()
 export class ItemsService {
+  private logger = new Logger('ItemsService');
   constructor(
     @InjectRepository(Item)
     private destinationsRepository: MongoRepository<Item>,
@@ -38,9 +44,11 @@ export class ItemsService {
           _id: new ObjectId(id),
         },
       });
+
+      if (isNil(results)) throw new Error('item doesnt found');
       return results;
     } catch (error) {
-      console.log('Error ===', error);
+      this.handleError(error);
     }
   }
 
@@ -60,5 +68,13 @@ export class ItemsService {
       _id: new ObjectId(id),
     });
     return results.value;
+  }
+
+  private handleError(err: any): never {
+    this.logger.error(err);
+    throw new InternalServerErrorException(
+      'service dont work today !  :(',
+      err,
+    );
   }
 }

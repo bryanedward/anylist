@@ -14,7 +14,7 @@ services:
     depends_on:
       - mongonest
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src
     command: npm run start:dev
 
   mongonest:

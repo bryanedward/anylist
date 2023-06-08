@@ -1,15 +1,17 @@
+import { isEmpty } from 'lodash';
+import { MongoRepository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
+
+// others
+import { User } from './entities/user.entity';
+// import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { SignUpInput } from 'src/auth/dto/inputs/signup.input';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { MongoRepository } from 'typeorm';
-import { isEmpty } from 'lodash';
 
 @Injectable()
 export class UsersService {
@@ -22,14 +24,13 @@ export class UsersService {
 
   async create(signUpInput: SignUpInput): Promise<User> {
     try {
-      const getUser = await this.findOne(signUpInput.email);
+      const getUser = await this.findOneByEmail(signUpInput.email);
 
       if (!isEmpty(getUser)) throw new Error('user exists');
       const results = this.destinationsRepository.create(signUpInput);
       return await this.destinationsRepository.save(results);
     } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException('service dont work today !  :(');
+      this.handleError(error);
     }
   }
 
@@ -37,12 +38,16 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  async findOne(email: string): Promise<User> {
-    const results = await this.destinationsRepository.findOneBy({
-      email,
-    });
-
-    return results;
+  async findOneByEmail(email: string): Promise<User> {
+    try {
+      const getUser = await this.destinationsRepository.findOneBy({
+        email,
+      });
+      // if (isEmpty(getUser)) throw new Error('email not exists');
+      return getUser;
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {
@@ -51,5 +56,13 @@ export class UsersService {
 
   block(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  private handleError(err: any): never {
+    this.logger.error(err);
+    throw new InternalServerErrorException(
+      'service dont work today !  :(',
+      err,
+    );
   }
 }

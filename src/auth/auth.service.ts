@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignUpInput } from './dto/inputs/signup.input';
 import { AuthResponse } from './types/auth-response.types';
@@ -24,6 +24,9 @@ export class AuthService {
       params.password,
       results.password,
     );
+    if (!validatePassword) {
+      throw new BadRequestException('Email / Password do not match');
+    }
 
     return {
       user: results,

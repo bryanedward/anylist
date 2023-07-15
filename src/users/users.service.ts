@@ -1,7 +1,8 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, get } from 'lodash';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -40,13 +41,16 @@ export class UsersService {
 
   async findOneByEmail(email: string): Promise<User> {
     try {
-      const getUser = await this.destinationsRepository.findOneBy({
+      const getUser = await this.destinationsRepository.findOneByOrFail({
         email,
       });
       // if (isEmpty(getUser)) throw new Error('email not exists');
       return getUser;
     } catch (error) {
-      this.handleError(error);
+      this.handleError({
+        code: 401,
+        detail: 'review email',
+      });
     }
   }
 
@@ -59,7 +63,9 @@ export class UsersService {
   }
 
   private handleError(err: any): never {
-    this.logger.error(err);
+    if (get(err, 'code') === 401) {
+      throw new BadRequestException(err.detail.replace('Key ', ''));
+    }
     throw new InternalServerErrorException(
       'service dont work today !  :(',
       err,

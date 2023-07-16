@@ -10,12 +10,10 @@ import { AuthService } from './auth.service';
 import { AuthResponse } from './types/auth-response.types';
 import { SignUpInput } from './dto/inputs/signup.input';
 import { LoginInput } from './dto/inputs';
-import { Req } from '@nestjs/common';
-import { Request } from 'express';
-
-type values = {
-  req: any;
-};
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from './guards/jwt-auth.guards';
+import { CurrentUser } from './decorators/user.decorators';
+import { User } from 'src/users/entities/user.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -35,5 +33,11 @@ export class AuthResolver {
   ): Promise<AuthResponse> {
     const results = await this.authService.login(loginInput);
     return results;
+  }
+
+  @Query(() => AuthResponse, { name: 'revalite' })
+  @UseGuards(JwtAuthGuard)
+  revalidateToken(@CurrentUser() user: User): AuthResponse {
+    return this.authService.revalidateToken(user);
   }
 }

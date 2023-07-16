@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignUpInput } from './dto/inputs/signup.input';
 import { AuthResponse } from './types/auth-response.types';
@@ -6,6 +10,8 @@ import { LoginInput } from './dto/inputs';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ObjectID } from 'typeorm';
+import { get, omit } from 'lodash';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +49,24 @@ export class AuthService {
 
     return {
       user: results,
+      token,
+    };
+  }
+
+  async validateUser(id: string) {
+    const user = await this.usersService.findOneById(id);
+    const result = omit(user, ['password']);
+
+    if (!get(result, 'isActive')) {
+      throw new UnauthorizedException('user not authorizate');
+    }
+    return result;
+  }
+
+  revalidateToken(user: User): AuthResponse {
+    const token = this.getJwtToken(user._id);
+    return {
+      user,
       token,
     };
   }

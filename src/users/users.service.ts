@@ -1,26 +1,24 @@
 import { isEmpty, get } from 'lodash';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ObjectId } from 'bson';
+
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 
 // others
 import { User } from './entities/user.entity';
-// import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
 import { SignUpInput } from 'src/auth/dto/inputs/signup.input';
 
 @Injectable()
 export class UsersService {
-  private logger = new Logger('ItemsService');
-
   constructor(
     @InjectRepository(User)
-    private destinationsRepository: MongoRepository<User>,
+    private userRepository: MongoRepository<User>,
   ) {}
 
   async create(signUpInput: SignUpInput): Promise<User> {
@@ -28,8 +26,8 @@ export class UsersService {
       const getUser = await this.findOneByEmail(signUpInput.email);
 
       if (!isEmpty(getUser)) throw new Error('user exists');
-      const results = this.destinationsRepository.create(signUpInput);
-      return await this.destinationsRepository.save(results);
+      const results = this.userRepository.create(signUpInput);
+      return await this.userRepository.save(results);
     } catch (error) {
       this.handleError(error);
     }
@@ -41,22 +39,31 @@ export class UsersService {
 
   async findOneByEmail(email: string): Promise<User> {
     try {
-      const getUser = await this.destinationsRepository.findOneByOrFail({
+      const getUser = await this.userRepository.findOneByOrFail({
         email,
       });
-      // if (isEmpty(getUser)) throw new Error('email not exists');
       return getUser;
     } catch (error) {
       this.handleError({
         code: 401,
-        detail: 'review email',
+        detail: 'check email',
       });
     }
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async findOneById(id: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({
+        _id: new ObjectId(id),
+      });
+    } catch (error) {
+      throw new NotFoundException('not found');
+    }
   }
+
+  // update(id: number, updateUserInput: UpdateUserInput) {
+  //   return `This action updates a #${id} user`;
+  // }
 
   block(id: number) {
     return `This action removes a #${id} user`;

@@ -14,6 +14,7 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guards';
 import { CurrentUser } from './decorators/user.decorators';
 import { User } from 'src/users/entities/user.entity';
+import { roles } from './enums/roles.enum';
 
 @Resolver()
 export class AuthResolver {
@@ -26,7 +27,9 @@ export class AuthResolver {
     return results;
   }
 
-  @Query(() => AuthResponse)
+  @Query(() => AuthResponse, {
+    description: 'login user added token for header',
+  })
   async login(
     @Context() context: GraphQLExecutionContext,
     @Args('loginInput') loginInput: LoginInput,
@@ -37,7 +40,7 @@ export class AuthResolver {
 
   @Query(() => AuthResponse, { name: 'revalite' })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(@CurrentUser() user: User): AuthResponse {
+  revalidateToken(@CurrentUser(roles.admin) user: User): AuthResponse {
     return this.authService.revalidateToken(user);
   }
 }

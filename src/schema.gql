@@ -27,9 +27,17 @@ type User {
 type Query {
   findAll: [Item!]!
   findItem(id: ID!): Item!
-  users: [User!]!
+  users(roles: [roles!]): [User!]!
+
+  """login user added token for header"""
   login(loginInput: LoginInput!): AuthResponse!
   revalite: AuthResponse!
+}
+
+enum roles {
+  admin
+  user
+  superUser
 }
 
 type AuthResponse {

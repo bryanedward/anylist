@@ -1,10 +1,21 @@
-import { ExecutionContext, createParamDecorator } from '@nestjs/common';
+import { get, some } from 'lodash';
+import { roles } from '../enums/roles.enum';
+import { User } from 'src/users/entities/user.entity';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  createParamDecorator,
+} from '@nestjs/common';
 
 export const CurrentUser = createParamDecorator(
-  (roles: [], context: ExecutionContext) => {
+  (role: roles, context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req.user;
-    return request;
+    const request: User = ctx.getContext().req.user;
+    const data = get(request, 'roles');
+
+    if (some(data, { role })) return request;
+
+    throw new ForbiddenException('solicitada acceso');
   },
 );

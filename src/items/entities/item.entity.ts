@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   ObjectIdColumn,
-  ObjectID,
+  ObjectId,
   CreateDateColumn,
   BaseEntity,
 } from 'typeorm';
@@ -13,7 +13,7 @@ import {
 export class Item extends BaseEntity {
   @ObjectIdColumn()
   @Field(() => ID)
-  _id: ObjectID;
+  _id: ObjectId;
 
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })

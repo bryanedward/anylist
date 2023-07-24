@@ -9,7 +9,7 @@ import { AuthResponse } from './types/auth-response.types';
 import { LoginInput } from './dto/inputs';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { ObjectID } from 'typeorm';
+import { ObjectId } from 'typeorm';
 import { get, omit } from 'lodash';
 import { User } from 'src/users/entities/user.entity';
 
@@ -20,7 +20,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private getJwtToken(userId: ObjectID) {
+  private getJwtToken(userId: ObjectId) {
     return this.jwtService.sign({ id: userId });
   }
 

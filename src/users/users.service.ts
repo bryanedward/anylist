@@ -1,4 +1,4 @@
-import { isEmpty, get } from 'lodash';
+import { isEmpty, get, head } from 'lodash';
 import { MongoRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'bson';
@@ -13,6 +13,7 @@ import {
 // others
 import { User } from './entities/user.entity';
 import { SignUpInput } from 'src/auth/dto/inputs/signup.input';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -33,8 +34,16 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(rol: any): Promise<User[]> {
+    try {
+      // Query users with photos of size less than 500
+      const getUser = await this.userRepository.find({
+        'roles.name': {
+          $in: rol,
+        },
+      });
+      return getUser;
+    } catch (error) {}
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -65,8 +74,15 @@ export class UsersService {
   //   return `This action updates a #${id} user`;
   // }
 
-  block(id: number) {
-    return `This action removes a #${id} user`;
+  async block(id: string, updateUserInput: UpdateUserInput) {
+    console.log(
+      '🚀 ~ file: users.service.ts:78 ~ UsersService ~ block ~ updateUserInput:',
+      updateUserInput,
+    );
+    await this.userRepository.update(
+      { _id: new ObjectId(id) },
+      { fullName: 'edward' },
+    );
   }
 
   private handleError(err: any): never {

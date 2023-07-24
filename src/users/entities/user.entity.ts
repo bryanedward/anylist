@@ -1,10 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
+  AfterUpdate,
   BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  ObjectID,
+  ObjectId,
   ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,10 +14,19 @@ import * as bcrypt from 'bcrypt';
 
 @Entity('Users')
 @ObjectType()
+export class Adress {
+  @Field(() => Number)
+  id: number;
+  @Field(() => String)
+  name: string;
+}
+
+@Entity('Users')
+@ObjectType()
 export class User {
   @ObjectIdColumn()
   @Field(() => ID)
-  _id: ObjectID;
+  _id: ObjectId;
 
   @Field(() => String)
   @Column()
@@ -29,13 +40,13 @@ export class User {
   @Field(() => String)
   password: string;
 
-  @Column({
-    type: 'string',
-    default: ['user'],
-    array: true,
-  })
-  @Field(() => [String])
-  roles: string[];
+  @Column()
+  @Field(() => [Adress])
+  roles: [Adress];
+
+  @Column()
+  @Field(() => [Adress])
+  address: Adress;
 
   @Column({
     type: 'boolean',
@@ -53,8 +64,14 @@ export class User {
   @BeforeInsert()
   async beforeInsertActions() {
     this.isActive = true;
-    this.roles = ['user'];
+    // this.roles = ['user'];
     const salt = bcrypt.genSaltSync(10);
     this.password = bcrypt.hashSync(this.password, salt);
+  }
+
+  @BeforeUpdate()
+  async afterUpdate() {
+    this.fullName = 'ij';
+    console.log('=====');
   }
 }

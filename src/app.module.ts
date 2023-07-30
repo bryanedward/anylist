@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LogsUserModule } from './logs-user/logs-user.module';
 import { PersonSubscriber } from './users/subscriber/UserSubscriber';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PersonSubscriber } from './users/subscriber/UserSubscriber';
     UsersModule,
     AuthModule,
     LogsUserModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

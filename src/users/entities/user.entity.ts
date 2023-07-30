@@ -2,16 +2,14 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
   BeforeInsert,
   Column,
-  FindOneAndReplaceOptions,
   CreateDateColumn,
   Entity,
   ObjectId,
   ObjectIdColumn,
   UpdateDateColumn,
-  AfterLoad,
+  ManyToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { BeforeFindOne } from '@nestjs-query/query-graphql';
 
 @Entity('Users')
 @ObjectType()
@@ -29,12 +27,12 @@ export class User {
   @Field(() => ID)
   _id: ObjectId;
 
-  @Field(() => String)
+  @Field(() => String, { defaultValue: 'email no exist' })
   @Column()
   email: string;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { defaultValue: 'fullName no exist' })
   fullName: string;
 
   @Column()
@@ -61,6 +59,9 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  // @ManyToOne(() => LogUser, (order) => order._id)
+  // order: LogUser;
 
   @BeforeInsert()
   async beforeInsertActions() {

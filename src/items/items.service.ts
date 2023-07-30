@@ -21,7 +21,14 @@ export class ItemsService {
 
   async create(createItemInput: CreateItemInput): Promise<Item> {
     try {
-      const newItem = this.destinationsRepository.create(createItemInput);
+      const newItem = this.destinationsRepository.create({
+        name: createItemInput.name,
+        quantity: createItemInput.quantity,
+        quantityUnits: createItemInput.quantityUnits,
+        user: {
+          fullName: 'edwawr',
+        },
+      });
       return await this.destinationsRepository.save(newItem);
     } catch (error) {
       console.log('Error ===', error);

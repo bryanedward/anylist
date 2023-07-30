@@ -2,19 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Item {
-  _id: ID!
-  name: String
-  quantity: Float!
-  quantityUnits: String!
-  createdAt: DateTime!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Adress {
   id: Float!
   name: String!
@@ -30,11 +17,33 @@ type User {
   isActive: Boolean!
 }
 
+type Item {
+  _id: ID!
+  name: String
+  quantity: Float!
+  quantityUnits: String!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""ok"""
+type Logs {
+  _id: ID!
+  fullname: String!
+  userLogs: User!
+  usermodify: [User!]!
+}
+
 type Query {
   findAll: [Item!]!
   findItem(id: ID!): Item!
   users(roles: [roles!]): [User!]!
   user(id: String!): User!
+  findalllogs: [Logs!]!
 
   """login user added token for header"""
   login(loginInput: LoginInput!): AuthResponse!

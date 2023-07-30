@@ -1,4 +1,13 @@
-import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  ID,
+  ObjectType,
+  PartialType,
+  PickType,
+} from '@nestjs/graphql';
+import mongoose from 'mongoose';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -7,6 +16,10 @@ import {
   CreateDateColumn,
   BaseEntity,
 } from 'typeorm';
+
+export class UserDto extends PartialType(
+  PickType(User, ['fullName', '_id', 'email', 'isActive'] as const),
+) {}
 
 @Entity('Item')
 @ObjectType()
@@ -26,6 +39,9 @@ export class Item extends BaseEntity {
   @Column()
   @Field(() => String)
   quantityUnits: string;
+
+  @Column([{ type: mongoose.Schema.Types.ObjectId, ref: User.name }])
+  user: UserDto;
 
   @Field()
   @CreateDateColumn({ type: 'timestamp' })

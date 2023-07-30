@@ -13,7 +13,11 @@ export class LogsUserService {
 
   async create(logUserInput: LogUserInput) {
     try {
-      const logs = this.logUserRepository.create(logUserInput);
+      const logs = this.logUserRepository.save({
+        fullname: logUserInput.fullName,
+        userLogs: logUserInput.user,
+      });
+
       return logs;
     } catch (error) {}
   }

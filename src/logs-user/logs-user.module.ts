@@ -7,5 +7,6 @@ import { LogUser } from './entities/logUser.entity';
 @Module({
   providers: [LogsUserResolver, LogsUserService],
   imports: [TypeOrmModule.forFeature([LogUser])],
+  exports: [LogsUserService],
 })
 export class LogsUserModule {}

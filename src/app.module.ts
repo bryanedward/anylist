@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LogsUserModule } from './logs-user/logs-user.module';
+import { PersonSubscriber } from './users/subscriber/UserSubscriber';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { LogsUserModule } from './logs-user/logs-user.module';
       autoLoadEntities: true,
       useUnifiedTopology: true,
       entities: [join(__dirname, '**/**.entity(.ts,.js)')],
+      subscribers: [PersonSubscriber],
     }),
     ItemsModule,
     UsersModule,

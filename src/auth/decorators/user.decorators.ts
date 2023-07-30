@@ -1,4 +1,4 @@
-import { get, indexOf, size, some } from 'lodash';
+import { get } from 'lodash';
 import { enumRoles } from '../enums/roles.enum';
 import { User } from 'src/users/entities/user.entity';
 import { GqlExecutionContext } from '@nestjs/graphql';

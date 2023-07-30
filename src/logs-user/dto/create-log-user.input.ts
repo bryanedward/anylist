@@ -1,19 +1,25 @@
-import { InputType, Int, Field, ObjectType } from '@nestjs/graphql';
+import {
+  InputType,
+  Field,
+  ObjectType,
+  PartialType,
+  PickType,
+} from '@nestjs/graphql';
+import { User } from 'src/users/entities/user.entity';
 import { Column } from 'typeorm';
 
-class User {
-  @Field(() => String)
-  _id: string;
-  name: string;
-}
+class UpdateCatDto extends PartialType(
+  PickType(User, ['fullName', '_id', 'email', 'isActive'] as const),
+) {}
 
 @ObjectType({ isAbstract: true })
 @InputType({ isAbstract: true })
 export class LogUserInput {
   @Column()
-  @Field(() => String, { description: 'Example field (placeholder)' })
-  id_usuario: string;
+  @Field(() => String, { description: '' })
+  fullName: string;
 
-  @Field(() => [User])
-  user: User;
+  @Field(() => UpdateCatDto)
+  @Column()
+  user: UpdateCatDto;
 }

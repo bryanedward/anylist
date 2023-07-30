@@ -1,16 +1,17 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
-  AfterUpdate,
   BeforeInsert,
-  BeforeUpdate,
   Column,
+  FindOneAndReplaceOptions,
   CreateDateColumn,
   Entity,
   ObjectId,
   ObjectIdColumn,
   UpdateDateColumn,
+  AfterLoad,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { BeforeFindOne } from '@nestjs-query/query-graphql';
 
 @Entity('Users')
 @ObjectType()
@@ -64,14 +65,15 @@ export class User {
   @BeforeInsert()
   async beforeInsertActions() {
     this.isActive = true;
-    // this.roles = ['user'];
+    console.log('==== after insert');
+
     const salt = bcrypt.genSaltSync(10);
     this.password = bcrypt.hashSync(this.password, salt);
-  }
-
-  @BeforeUpdate()
-  async afterUpdate() {
-    this.fullName = 'ij';
-    console.log('=====');
+    this.roles = [
+      {
+        id: 1,
+        name: 'admin',
+      },
+    ];
   }
 }

@@ -56,7 +56,6 @@ export class AuthService {
   async validateUser(id: string) {
     const user = await this.usersService.findOneById(id);
     const result = omit(user, ['password']);
-
     if (!get(result, 'isActive')) {
       throw new UnauthorizedException('user not authorizate');
     }

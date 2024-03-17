@@ -4,6 +4,7 @@ services:
   dev:
     image: nest_docker:local
     container_name: nestjs_api_dev
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
